@@ -5,10 +5,12 @@ import axios from 'axios';
 const Things = ()=> {
   const { things } = useSelector(state => state);
   const dispatch = useDispatch();
+
   const createThing = async(thing)=> {
     const response = await axios.post('/api/things', thing);
-    dispatch({ type: 'ADD_THING', thing: response.data });
+    dispatch({ type: 'CREATE_THING', thing: response.data });
   };
+
   const destroyThing = async(thing)=> {
     await axios.delete(`/api/things/${thing.id}`);
     dispatch({ type: 'DESTROY_THING', thing });

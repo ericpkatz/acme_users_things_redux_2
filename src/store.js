@@ -1,31 +1,48 @@
-import { createStore } from 'redux';
+import { combineReducers, createStore, applyMiddleware } from 'redux';
+import logger from 'redux-logger';
 
-const initialState = {
-  users: [],
-  things: [],
-  view: ''
-};
-
-const reducer = (state = initialState, action)=> {
-  if(action.type === 'SET_THINGS'){
-    return {...state, things: action.things };
+const countReducer = (state = 0, action)=> {
+  if(action.type === 'INC'){
+    state++;
+    return state;
   }
-  if(action.type === 'ADD_THING'){
-    return {...state, things: [ ...state.things, action.thing] };
+  return state;
+};
+const thingsReducer = (state = [], action)=> {
+  if(action.type === 'SET_THINGS'){
+    return action.things; 
+  }
+  if(action.type === 'CREATE_THING'){
+    return [...state, action.thing ]; 
   }
   if(action.type === 'DESTROY_THING'){
-    return {...state, things: state.things.filter(_thing => _thing.id !== action.thing.id )}
-  }
-  if(action.type === 'SET_USERS'){
-    return {...state, users: action.users };
-  }
-  if(action.type === 'SET_VIEW'){
-    return {...state, view: action.view };
-
+    return state.filter(_thing => _thing.id !== action.thing.id );
   }
   return state;
 };
 
-const store = createStore(reducer);
+const usersReducer = (state = [], action)=> {
+  if(action.type === 'SET_USERS'){
+    return action.users; 
+  }
+  return state;
+};
+
+const viewReducer = (state = '', action)=> {
+  if(action.type === 'SET_VIEW'){
+    return action.view; 
+  }
+  return state;
+};
+
+const reducer = combineReducers({
+  users: usersReducer,
+  things: thingsReducer,
+  view: viewReducer,
+  count: countReducer
+});
+
+
+const store = createStore(reducer, applyMiddleware(logger));
 
 export default store;

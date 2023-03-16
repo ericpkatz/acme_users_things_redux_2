@@ -11,6 +11,7 @@ import store from './store';
 const App = ()=> {
   const dispatch = useDispatch();
   const { view } = useSelector(state => state);
+
   useEffect(()=> {
     window.addEventListener('hashchange', ()=> {
       dispatch({ type: 'SET_VIEW', view: window.location.hash.slice(1)});
