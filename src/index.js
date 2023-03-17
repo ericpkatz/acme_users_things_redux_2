@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import { createRoot } from 'react-dom/client';
-import axios from 'axios';
 import Home from './Home';
 import Users from './Users';
 import Things from './Things';
 import Nav from './Nav';
-import store from './store';
+import store, { fetchUsers, fetchThings} from './store';
 
 const App = ()=> {
   const dispatch = useDispatch();
@@ -20,20 +19,10 @@ const App = ()=> {
   }, []);
 
   useEffect(()=> {
-    const fetchData = async()=> {
-      const response = await axios.get('/api/things');
-      dispatch({ type: 'SET_THINGS', things: response.data });
-    };
-    fetchData();
+    dispatch(fetchUsers());
+    dispatch(fetchThings());
   }, []);
 
-  useEffect(()=> {
-    const fetchData = async()=> {
-      const response = await axios.get('/api/users');
-      dispatch({ type: 'SET_USERS', users: response.data });
-    };
-    fetchData();
-  }, []);
 
   return (
     <div>

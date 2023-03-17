@@ -1,8 +1,10 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { destroyUser } from './store';
 
 const Users = ()=> {
   const { users } = useSelector(state => state);
+  const dispatch = useDispatch();
   return (
     <div>
       <h1>Users</h1>
@@ -12,6 +14,7 @@ const Users = ()=> {
             return (
               <li key={ user.id }>
                 { user.name }
+                <button onClick={()=> dispatch(destroyUser(user))}>x</button>
               </li>
             );
           })

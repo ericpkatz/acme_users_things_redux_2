@@ -1,33 +1,60 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import axios from 'axios';
+import { createThing, updateThing, destroyThing } from './store';
 
 const Things = ()=> {
   const { things } = useSelector(state => state);
   const dispatch = useDispatch();
+  const [name, setName ] = useState('');
+  const [ errors, setErrors ] = useState([]);
 
-  const createThing = async(thing)=> {
-    const response = await axios.post('/api/things', thing);
-    dispatch({ type: 'CREATE_THING', thing: response.data });
+  const create = async(ev)=> {
+    ev.preventDefault();
+    try {
+      await dispatch(createThing({ name }));
+      setName('');
+      setErrors([]);
+    }
+    catch(ex){
+      setErrors(ex.response.data.error.errors);
+    }
   };
 
-  const destroyThing = async(thing)=> {
-    await axios.delete(`/api/things/${thing.id}`);
-    dispatch({ type: 'DESTROY_THING', thing });
+  const destroy = (thing)=> {
+    dispatch(destroyThing(thing));
   };
+  
+  const increment = (thing)=> {
+    thing.rating++;
+    dispatch(updateThing(thing));
+  };
+
   return (
     <div>
       <h1>Things</h1>
-      <button onClick={
-        ev => createThing({ name: Math.random() })
-      }>Create</button>
+      <form onSubmit={ create }>
+        <input value={ name } onChange={ ev => setName(ev.target.value)} placeholder='name for thing'/>
+        <button disabled={ !name }>Create</button>
+        <ul>
+          {
+            errors.map( (error, idx) => {
+              return (
+                <li key={ idx }>
+                  { error.message }
+                </li>
+              );
+            })
+          }
+        </ul>
+      </form>
       <ul>
         {
           things.map( thing => {
             return (
               <li key={ thing.id }>
-                { thing.name }
-                <button onClick={ ev => destroyThing(thing)}>x</button>
+                { thing.name } ({ thing.rating})
+                <button onClick={ ev => destroy(thing)}>x</button>
+                <button onClick={ ()=> increment(thing)}>+</button>
               </li>
             );
           })

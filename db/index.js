@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize'); 
-const { STRING, UUID, UUIDV4 } = Sequelize;
+const { INTEGER, STRING, UUID, UUIDV4 } = Sequelize;
 const conn = new Sequelize(process.env.DATABASE_URL || 'postgres://localhost/acme_db');
 
 const User = conn.define('user', {
@@ -24,6 +24,14 @@ const Thing = conn.define('thing', {
   name: {
     type: STRING,
     unique: true,
+    allowNull: false,
+    validate: {
+      len: [2, 255]
+    }
+  },
+  rating: {
+    type: INTEGER,
+    defaultValue: 5,
     allowNull: false
   }
 });
